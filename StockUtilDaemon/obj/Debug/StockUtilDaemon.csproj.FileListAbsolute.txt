@@ -1,0 +1,13 @@
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\bin\Debug\StockUtilDaemon.exe
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\bin\Debug\StockUtilDaemon.pdb
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\bin\Debug\Interop.KHOpenAPILib.dll
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\bin\Debug\AxInterop.KHOpenAPILib.dll
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.csprojResolveAssemblyReference.cache
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\Interop.KHOpenAPILib.dll
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\AxInterop.KHOpenAPILib.dll
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.csproj.ResolveComReference.cache
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.Form1.resources
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.Properties.Resources.resources
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.csproj.GenerateResource.Cache
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.exe
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.pdb
