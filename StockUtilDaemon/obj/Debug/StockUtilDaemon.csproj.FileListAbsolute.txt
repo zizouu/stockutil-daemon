@@ -11,3 +11,4 @@ C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDae
 C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.csproj.GenerateResource.Cache
 C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.exe
 C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\obj\Debug\StockUtilDaemon.pdb
+C:\Users\daou\Desktop\private\project\visual-studio\StockUtilDaemon\StockUtilDaemon\bin\Debug\StockUtilDaemon.exe.config
