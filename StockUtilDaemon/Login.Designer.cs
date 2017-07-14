@@ -1,6 +1,6 @@
 ﻿namespace StockUtilDaemon
 {
-    partial class Form1
+    partial class Login
     {
         /// <summary>
         /// 필수 디자이너 변수입니다.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Login));
             this.axKHOpenAPI1 = new AxKHOpenAPILib.AxKHOpenAPI();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -104,7 +104,7 @@
             this.kosdaqCodeListBox.ItemHeight = 12;
             this.kosdaqCodeListBox.Location = new System.Drawing.Point(762, 80);
             this.kosdaqCodeListBox.Name = "kosdaqCodeListBox";
-            this.kosdaqCodeListBox.Size = new System.Drawing.Size(185, 544);
+            this.kosdaqCodeListBox.Size = new System.Drawing.Size(550, 544);
             this.kosdaqCodeListBox.TabIndex = 6;
             // 
             // elwCodeListBox
@@ -134,38 +134,38 @@
             this.highYieldCodeListBox.Size = new System.Drawing.Size(179, 268);
             this.highYieldCodeListBox.TabIndex = 9;
             // 
-            // listBox2
+            // reitCodeListBox
             // 
             this.reitCodeListBox.FormattingEnabled = true;
             this.reitCodeListBox.ItemHeight = 12;
             this.reitCodeListBox.Location = new System.Drawing.Point(200, 356);
-            this.reitCodeListBox.Name = "listBox2";
+            this.reitCodeListBox.Name = "reitCodeListBox";
             this.reitCodeListBox.Size = new System.Drawing.Size(179, 268);
             this.reitCodeListBox.TabIndex = 10;
             // 
-            // listBox3
+            // mutualFundCodeListBox
             // 
             this.mutualFundCodeListBox.FormattingEnabled = true;
             this.mutualFundCodeListBox.ItemHeight = 12;
             this.mutualFundCodeListBox.Location = new System.Drawing.Point(12, 80);
-            this.mutualFundCodeListBox.Name = "listBox3";
+            this.mutualFundCodeListBox.Name = "mutualFundCodeListBox";
             this.mutualFundCodeListBox.Size = new System.Drawing.Size(179, 268);
             this.mutualFundCodeListBox.TabIndex = 11;
             // 
-            // listBox4
+            // newStockCodeListBox
             // 
             this.newStockCodeListBox.FormattingEnabled = true;
             this.newStockCodeListBox.ItemHeight = 12;
             this.newStockCodeListBox.Location = new System.Drawing.Point(15, 356);
-            this.newStockCodeListBox.Name = "listBox4";
+            this.newStockCodeListBox.Name = "newStockCodeListBox";
             this.newStockCodeListBox.Size = new System.Drawing.Size(179, 268);
             this.newStockCodeListBox.TabIndex = 12;
             // 
-            // Form1
+            // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(959, 669);
+            this.ClientSize = new System.Drawing.Size(1324, 669);
             this.Controls.Add(this.newStockCodeListBox);
             this.Controls.Add(this.mutualFundCodeListBox);
             this.Controls.Add(this.reitCodeListBox);
@@ -179,8 +179,8 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.axKHOpenAPI1);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "Login";
+            this.Text = "Login";
             ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

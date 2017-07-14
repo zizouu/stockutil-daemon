@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace StockUtilDaemon
 {
-    static class Program
+    static class StockUtilMain
     {
         /// <summary>
         /// 해당 응용 프로그램의 주 진입점입니다.
@@ -15,7 +15,7 @@ namespace StockUtilDaemon
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new Login());
         }
     }
 }

@@ -8,11 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+
 namespace StockUtilDaemon
 {
-    public partial class Form1 : Form
+    public partial class Login : Form
     {
-        public Form1()
+        public Login()
         {
             InitializeComponent();
 
@@ -82,9 +83,9 @@ namespace StockUtilDaemon
                 setCodeListBox(reitCodeListBox, reitDic, "6");
                 setCodeListBox(etfCodeListBox, etfDic, "8");
                 setCodeListBox(highYieldCodeListBox, highYieldDic, "9");
-                //setCodeListBox(kosdaqCodeListBox, kosdaqDic, "10");
+                setCodeListBox(kosdaqCodeListBox, kosdaqDic, "10");
 
-                requestStockDataByCode("249420", "20170628");
+                //requestStockDataByCode("249420", "20170628");
             }
             else
             {
@@ -194,6 +195,7 @@ namespace StockUtilDaemon
                 for(int idx = 0; idx < cnt; idx++)
                 {
                     this.kosdaqCodeListBox.Items.Add("종목코드" + getReceiveDataByName(e, idx, "종목코드"));
+                    this.kosdaqCodeListBox.Items.Add("시가" + getReceiveDataByName(e, idx, "시가"));
                     this.kosdaqCodeListBox.Items.Add("현재가" + getReceiveDataByName(e, idx, "현재가"));
                     this.kosdaqCodeListBox.Items.Add("거래량" + getReceiveDataByName(e, idx, "거래량"));
                     this.kosdaqCodeListBox.Items.Add("거래대금" + getReceiveDataByName(e, idx, "거래대금"));
