@@ -18,13 +18,22 @@ namespace StockUtilDaemon
 
         public DatabaseController()
         {
+            initConnection();
+        }
+
+        public void initConnection()
+        {
             this.connection = new NpgsqlConnection(DATABASE_CONNECTION_INFO);
             this.connection.Open();
             this.command = connection.CreateCommand();
         }
 
-        public void insertDailyBatchData()
+        public void insertDailyBatchData(List<DailyTradingModel> list)
         {
+            foreach(DailyTradingModel model in list){
+                //TODO: Insert Logic
+                //String.Format("insert into daily_trading")
+            }
         }
 
         public void selectAllStockTrading()
