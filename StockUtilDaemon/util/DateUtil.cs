@@ -8,6 +8,15 @@ namespace StockUtilDaemon
 {
     class DateUtil
     {
+        public static String convertDateTimeToString(DateTime date)
+        {
+            String dateString = date.ToShortDateString();
+            dateString = dateString.Replace('-', ' ');
+            dateString = dateString.Trim();
+
+            return dateString;
+        }
+
         public static DateTime convertStringToDateTime(String dateString)
         {
             String[] dateArray = new String[3];
@@ -27,6 +36,29 @@ namespace StockUtilDaemon
             dateArray[2] = dateString.Substring(6, 2);
 
             return dateArray;
+        }
+
+        public static List<DateTime> getPeriodDateTimeExceptWeekend(DateTime fromDate, int period)
+        {
+            List<DateTime> listDateTime = new List<DateTime>();
+            for(int i = 0; i <= period; i++)
+            {
+                DateTime date = fromDate.AddDays(i);
+                if (isNotWeekend(date))
+                {
+                    listDateTime.Add(date);
+                }
+            }
+            return listDateTime;
+        }
+
+        public static Boolean isNotWeekend(DateTime date)
+        {
+            String day = date.ToString("ddd");
+            if ("Sat".Equals(day) || "Sun".Equals(day)){
+                return false;
+            }
+            return true;
         }
     }
 }
