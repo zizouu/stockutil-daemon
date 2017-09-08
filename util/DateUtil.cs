@@ -9,10 +9,22 @@ namespace StockUtilDaemon
 {
     class DateUtil
     {
+        public static String trimWhiteSpace(String src)
+        {
+            src = Regex.Replace(src, " ", "");
+            return src;
+        }
+
+        public static String replaceString(String src, String from, String to)
+        {
+            src = Regex.Replace(src, from, to);
+            return src;
+        }
+
         public static String convertDateTimeToString(DateTime date)
         {
             String dateString = date.ToShortDateString();
-            dateString = Regex.Replace(dateString, "-", "");
+            dateString = replaceString(dateString, "-", "");
                
             return dateString;
         }
@@ -20,6 +32,9 @@ namespace StockUtilDaemon
         public static DateTime convertStringToDateTime(String dateString)
         {
             String[] dateArray = new String[3];
+
+            dateString = trimWhiteSpace(dateString);
+            dateString = replaceString(dateString, "-", "");
 
             if (dateString.Length == 8)
             {

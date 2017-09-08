@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 namespace StockUtilDaemon
@@ -39,9 +34,7 @@ namespace StockUtilDaemon
                 if(this.kiWoomApi.GetConnectState() == 1)
                 {
                     this.loginStatus.Text = "접속상태 : 연결중";
-                    LogUtil.logConsole("Login.cs onLoginSuccess");
-                    StockDataCollector collector = new StockDataCollector(kiWoomApi);
-                    collector.startCollect();
+                    this.collectStart();
                 }
                 else if(this.kiWoomApi.GetConnectState() == 0)
                 {
@@ -51,6 +44,36 @@ namespace StockUtilDaemon
             else
             {
                 this.loginStatus.Text = "로그인 실패";
+            }
+        }
+
+        private void collectStart()
+        {
+            StockDataCollector collector = new StockDataCollector(this.kiWoomApi);
+            CollectorCheckJob checkJob = new CollectorCheckJob(this, collector);
+            Thread collectorThread = new Thread(collector.startCollect);
+            Thread checkerThread = new Thread(checkJob.checkCollectorStatus);
+            collectorThread.Start();
+            checkerThread.Start();
+        }
+        
+        public String getCollectorStatus()
+        {
+            return this.statusBox.Text;
+        }
+
+        delegate void SetCollectorStatusDelegator(String text);
+
+        public void setCollectorStatus(String text)
+        {
+            if (this.statusBox.InvokeRequired)
+            {
+                SetCollectorStatusDelegator call = new SetCollectorStatusDelegator(this.setCollectorStatus);
+                this.Invoke(call, text);
+            }
+            else
+            {
+                this.statusBox.Text = text;
             }
         }
     }

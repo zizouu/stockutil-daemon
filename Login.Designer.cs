@@ -32,13 +32,14 @@
             this.kiWoomApi = new AxKHOpenAPILib.AxKHOpenAPI();
             this.loginButton = new System.Windows.Forms.Button();
             this.loginStatus = new System.Windows.Forms.TextBox();
+            this.statusBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.kiWoomApi)).BeginInit();
             this.SuspendLayout();
             // 
             // kiWoomApi
             // 
             this.kiWoomApi.Enabled = true;
-            this.kiWoomApi.Location = new System.Drawing.Point(105, 147);
+            this.kiWoomApi.Location = new System.Drawing.Point(1, 1);
             this.kiWoomApi.Name = "kiWoomApi";
             this.kiWoomApi.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("kiWoomApi.OcxState")));
             this.kiWoomApi.Size = new System.Drawing.Size(10, 10);
@@ -61,11 +62,19 @@
             this.loginStatus.Size = new System.Drawing.Size(203, 21);
             this.loginStatus.TabIndex = 3;
             // 
+            // statusBox
+            // 
+            this.statusBox.Location = new System.Drawing.Point(12, 199);
+            this.statusBox.Name = "statusBox";
+            this.statusBox.Size = new System.Drawing.Size(203, 21);
+            this.statusBox.TabIndex = 4;
+            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(227, 162);
+            this.ClientSize = new System.Drawing.Size(227, 259);
+            this.Controls.Add(this.statusBox);
             this.Controls.Add(this.loginStatus);
             this.Controls.Add(this.loginButton);
             this.Controls.Add(this.kiWoomApi);
@@ -82,6 +91,7 @@
         private AxKHOpenAPILib.AxKHOpenAPI kiWoomApi;
         private System.Windows.Forms.Button loginButton;
         private System.Windows.Forms.TextBox loginStatus;
+        public System.Windows.Forms.TextBox statusBox;
     }
 }
 

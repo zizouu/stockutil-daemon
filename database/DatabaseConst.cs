@@ -35,5 +35,6 @@ namespace StockUtilDaemon
                                                             "VALUES (@code, @name, @startPrice, @endPrice, " +
                                                                     "@highPrice, @lowPrice, @volume, @tradingValue, " +
                                                                     "@tradingDate, @createdDate, @modifiedDate)";
+        public static String SELECT_RECENT_TRADING_DATE = "SELECT trading_date FROM daily_trading WHERE code = @code ORDER BY trading_date DESC LIMIT 1";
     }
 }

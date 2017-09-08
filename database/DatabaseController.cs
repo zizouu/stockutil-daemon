@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Npgsql;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StockUtilDaemon
 {
@@ -61,24 +62,44 @@ namespace StockUtilDaemon
         public int insertDailyBatchData(List<DailyTradingModel> list)
         {
             int result = 0;
-            foreach(DailyTradingModel model in list){
-                //TODO: Insert Logic
-                NpgsqlCommand command = connection.CreateCommand();
-                command.CommandText = DatabaseConst.INSERT_DAILY_TRADING;
-                command.Parameters.Add("code", NpgsqlTypes.NpgsqlDbType.Varchar).Value = model.Code;
-                command.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Varchar).Value = model.Name;
-                command.Parameters.Add("startPrice", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.StartPrice;
-                command.Parameters.Add("endPrice", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.EndPrice;
-                command.Parameters.Add("highPrice", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.HighPrice;
-                command.Parameters.Add("lowPrice", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.LowPrice;
-                command.Parameters.Add("volume", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.Volume;
-                command.Parameters.Add("tradingValue", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.TradingValue;
-                command.Parameters.Add("tradingDate", NpgsqlTypes.NpgsqlDbType.Date).Value = model.TradingDate;
-                command.Parameters.Add("createdDate", NpgsqlTypes.NpgsqlDbType.Date).Value = model.CreatedDate;
-                command.Parameters.Add("modifiedDate", NpgsqlTypes.NpgsqlDbType.Date).Value = model.ModifiedDate;
-                int count = command.ExecuteNonQuery();
-                result += count;
-            }
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            ThreadPoolChecker checker = new ThreadPoolChecker(list.Count);
+
+            Parallel.For(0, list.Count, i =>
+            {
+                using (NpgsqlConnection connectionParallel = new NpgsqlConnection(this.DATABASE_CONNECTION_INFO))
+                {
+                    connectionParallel.Open();
+                    using(NpgsqlCommand commandParallel = new NpgsqlCommand(DatabaseConst.INSERT_DAILY_TRADING, connectionParallel))
+                    {
+                        DailyTradingModel model = list.ElementAt<DailyTradingModel>(i);
+                        commandParallel.Parameters.Add("code", NpgsqlTypes.NpgsqlDbType.Varchar).Value = model.Code;
+                        commandParallel.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Varchar).Value = model.Name;
+                        commandParallel.Parameters.Add("startPrice", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.StartPrice;
+                        commandParallel.Parameters.Add("endPrice", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.EndPrice;
+                        commandParallel.Parameters.Add("highPrice", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.HighPrice;
+                        commandParallel.Parameters.Add("lowPrice", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.LowPrice;
+                        commandParallel.Parameters.Add("volume", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.Volume;
+                        commandParallel.Parameters.Add("tradingValue", NpgsqlTypes.NpgsqlDbType.Integer).Value = model.TradingValue;
+                        commandParallel.Parameters.Add("tradingDate", NpgsqlTypes.NpgsqlDbType.Date).Value = model.TradingDate;
+                        commandParallel.Parameters.Add("createdDate", NpgsqlTypes.NpgsqlDbType.Date).Value = model.CreatedDate;
+                        commandParallel.Parameters.Add("modifiedDate", NpgsqlTypes.NpgsqlDbType.Date).Value = model.ModifiedDate;
+                        try
+                        {
+                            commandParallel.ExecuteScalar();
+                        }
+                        catch(Exception e)
+                        {
+                            LogUtil.logConsole(e.Message);
+                        }
+                        
+                    }
+                }
+            });
+
+            watch.Stop();
+            LogUtil.logConsole(" insert " + result + " items take " + watch.ElapsedMilliseconds / 1000 + "seconds");
             return result;
         }
 
@@ -176,6 +197,25 @@ namespace StockUtilDaemon
             command.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Varchar).Value = item.Name;
             count = command.ExecuteNonQuery();
             return count;
+        }
+
+        public DateTime selectRecentTradingDate(String code)
+        {
+            NpgsqlCommand command = connection.CreateCommand();
+            command.CommandText = DatabaseConst.SELECT_RECENT_TRADING_DATE;
+            command.Parameters.Add("code", NpgsqlTypes.NpgsqlDbType.Varchar).Value = code;
+            NpgsqlDataReader reader = command.ExecuteReader();
+
+            // if not exist trading_date then return 1/1/1
+            DateTime recentTradingDate = new DateTime(1, 1, 1);
+
+            while (reader.Read())
+            {
+                recentTradingDate = (DateTime)reader["trading_date"];
+             }
+            reader.Close();
+
+            return recentTradingDate;
         }
     }
 }

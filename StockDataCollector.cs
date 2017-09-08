@@ -8,6 +8,13 @@ namespace StockUtilDaemon
 {
     class StockDataCollector
     {
+        public static String STATUS_NONE = "none";
+        public static String STATUS_READY = "ready";
+        public static String STATUS_CHECK_ITEM = "check item";
+        public static String STATUS_COLLECT = "collect data";
+        public static String STATUS_FINISH = "finish";
+        public static bool isLockApi = false;
+
         private String TEST_STOCK_CODE = "009680";  // 모토닉 코드번호
         private String TEST_DATE = "20170804";
 
@@ -17,28 +24,33 @@ namespace StockUtilDaemon
 
         private Dictionary<String, Dictionary<String, String>> codeDic;
         private String lastUpdate;
+        private String collectorStatus = STATUS_NONE;
 
         public StockDataCollector(AxKHOpenAPILib.AxKHOpenAPI api)
         {
-            LogUtil.logConsole("StockDataCollector constructor start");
             this.proxy = new KiwoomApiProxy(api);
             this.kiWoomApi = api;
             this.dbController = new DatabaseController();
             this.kiWoomApi.OnReceiveTrData += this.onReceiveKiwoomApiEvent;
-            LogUtil.logConsole("StockDataCollector constructor end");
+            this.collectorStatus = STATUS_READY;
+        }
+
+        public String getCollectorStatus()
+        {
+            return collectorStatus;
         }
 
         public void startCollect()
         {
-            LogUtil.logConsole("date : " + DateTime.Now);
-            //LogUtil.logConsole("collect start!!");
-            //this.codeDic = proxy.getBatchCodeAndNameData();
-            //updateStockItem();
-            //checkLastUpdateDate();
+            this.collectorStatus = STATUS_CHECK_ITEM;   
+            this.codeDic = proxy.getBatchCodeAndNameData();
+            updateStockItem();
+            checkLastUpdateDate();
+            this.collectorStatus = STATUS_COLLECT;
+            proxy.getDailyBatchData(this.codeDic);
+            updateLastUpdateDate();
+            this.collectorStatus = STATUS_FINISH;
             ////proxy.getDailyDataForTest(this.TEST_STOCK_CODE, this.TEST_DATE);
-            //proxy.getDailyBatchData(this.codeDic);
-            //updateLastUpdateDate();
-            //LogUtil.logConsole("collect finish!!");
         }
 
         private void updateLastUpdateDate()
@@ -94,29 +106,74 @@ namespace StockUtilDaemon
 
         private void onReceiveKiwoomApiEvent(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e)
         {
-            LogUtil.logConsole("onReceiveKiwoomApiEvent start");
             if (e.sRQName == "일봉조회")
             {
+                StockDataCollector.isLockApi = true;
                 int cnt = kiWoomApi.GetRepeatCnt(e.sTrCode, e.sRQName);
-                String code = getReceiveDataCode(e);
-                LogUtil.logConsole("Code : " + code);
-                List<DailyTradingModel> list = new List<DailyTradingModel>();
-                for (int idx = 0; idx < cnt; idx++)
+                if(cnt == 0)
                 {
-                    DailyTradingModel model = makeDailyTradingModel(e, idx, code);
-                    if (isNewData(model))
+                    LogUtil.logConsole(" count zero!! ");
+                }
+                else
+                {
+                    String code = getReceiveDataCode(e);
+                    List<DailyTradingModel> list = new List<DailyTradingModel>();
+
+                    // if most recent data is inserted then skip logic
+                    DailyTradingModel recentModel = makeDailyTradingModel(e, 0, code);
+                    if (!checkIsInsertedData(code, recentModel))
                     {
-                        list.Add(model);
+                        DateTime recentDate = dbController.selectRecentTradingDate(code);
+                        DailyTradingModel firstModel = makeDailyTradingModel(e, cnt - 1, code);
+                        DailyTradingModel lastModel = makeDailyTradingModel(e, 0, code);
+
+                        bool isFirstInserted = compareRecentDateAndModelDate(recentDate, firstModel.TradingDate);
+                        bool isLastInserted = compareRecentDateAndModelDate(recentDate, lastModel.TradingDate);
+
+                        for (int idx = 0; idx < cnt; idx++)
+                        {
+                            DailyTradingModel model = makeDailyTradingModel(e, (cnt - 1) - idx, code);
+                            bool isInserted = compareRecentDateAndModelDate(recentDate, model.TradingDate);
+                            if (!isInserted)
+                            {
+                                list.Add(model);
+                            }
+                            else if(isFirstInserted && isLastInserted)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        LogUtil.logConsole("SKIP : " + code);
+                    }
+
+                    if (list.Count != 0)
+                    {
+                        dbController.insertDailyBatchData(list);
+                        LogUtil.logConsole(" db inserteds ");
                     }
                 }
-
-                if(list.Count != 0)
-                {
-                    dbController.insertDailyBatchData(list);
-                    LogUtil.logConsole("insert data : " + list.Count);
-                }
+                StockDataCollector.isLockApi = false;
             }
-            LogUtil.logConsole("onReceiveKiwoomApiEvent end");
+        }
+
+        private DateTime getRecentTradingDateByCode(String code)
+        {
+            return dbController.selectRecentTradingDate(code);
+        }
+
+        private bool compareRecentDateAndModelDate(DateTime recentDate, DateTime modelDate)
+        {
+            int result = DateTime.Compare(recentDate, modelDate);
+            return (result < 0) ? false : true;
+        }
+
+        private bool checkIsInsertedData(String code, DailyTradingModel model)
+        {
+            DateTime recentDate = getRecentTradingDateByCode(code);
+            return compareRecentDateAndModelDate(recentDate, model.TradingDate);
         }
 
         private bool isNewData(DailyTradingModel model)
@@ -132,7 +189,8 @@ namespace StockUtilDaemon
 
         private String getReceiveDataCode(AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e)
         {
-            return getReceiveDataByName(e, 0, "종목코드");
+            
+            return DateUtil.trimWhiteSpace(getReceiveDataByName(e, 0, "종목코드"));
         }
 
         private String getReceiveDataByName(AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e, int index, String name)

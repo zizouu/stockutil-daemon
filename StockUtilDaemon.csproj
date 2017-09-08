@@ -69,6 +69,9 @@
   <ItemGroup>
     <Compile Include="database\DatabaseConst.cs" />
     <Compile Include="database\DatabaseController.cs" />
+    <Compile Include="job\CollectorCheckJob.cs" />
+    <Compile Include="job\ThreadPoolChecker.cs" />
+    <Compile Include="job\TradingDateInsertJob.cs" />
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>

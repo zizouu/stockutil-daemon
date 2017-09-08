@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace StockUtilDaemon
 {
@@ -47,6 +45,7 @@ namespace StockUtilDaemon
 
         public void getDailyBatchData(Dictionary<String, Dictionary<String, String>> codeDic)
         {
+            int count = 0;
             LogUtil.logConsole("Proxy getDailyBatchData start");
             Dictionary<String, String> kospiDic, kosdaqDic;
             codeDic.TryGetValue("0", out kospiDic);
@@ -54,9 +53,46 @@ namespace StockUtilDaemon
 
             foreach (KeyValuePair<String, String> kvp in kospiDic)
             {
+                waitCollectorProcess();
+                count++;
+                LogUtil.logConsole(" reuqest code : " + kvp.Key);
                 requestStockDataByCode(kvp.Key, DateUtil.convertDateTimeToString(DateTime.Now));
+                sleepForLimitedRequest(count);
             }
+
+            foreach (KeyValuePair<String, String> kvp in kosdaqDic)
+            {
+                waitCollectorProcess();
+                count++;
+                LogUtil.logConsole(" reuqest code : " + kvp.Key);
+                requestStockDataByCode(kvp.Key, DateUtil.convertDateTimeToString(DateTime.Now));
+
+                sleepForLimitedRequest(count);
+            }
+
             LogUtil.logConsole("Proxy getDailyBatchData stop");
+        }
+
+        private void waitCollectorProcess()
+        {
+            while (StockDataCollector.isLockApi)
+            {
+                threadSleep(1000);
+            }
+        }
+
+        private void sleepForLimitedRequest(int count)
+        {
+            //if (count % 4 == 0)
+            //{
+                LogUtil.logConsole(" request count : " + count);
+                threadSleep(3700);
+            //}
+        }
+
+        private void threadSleep(int time)
+        {
+            Thread.Sleep(time);
         }
 
         private Dictionary<String, Dictionary<String, String>> getValueableCodeList()
@@ -154,7 +190,7 @@ namespace StockUtilDaemon
             kiWoomApi.SetInputValue("종목코드", code);
             kiWoomApi.SetInputValue("기준일자", date);
             kiWoomApi.SetInputValue("수정주가구분", "0");
-            kiWoomApi.CommRqData("일봉조회", "opt10081", 0, "1002");
+            int result = kiWoomApi.CommRqData("일봉조회", "opt10081", 0, "1002");
         }
 
         private void removeDuplicatedCodeByMarketNum(Dictionary<String, Dictionary<String, String>> codeDic, String fromMarketNum, String toMarketNum)
